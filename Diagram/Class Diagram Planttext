@@ -1,0 +1,117 @@
+@startuml
+
+class Organization {
+  +int org_id
+  +String name
+  +String type
+  +String address
+  +String contact_info
+  --
+  +addOrganization(name: String, type: String, address: String, contact_info: String): Organization
+  +getOrganizationDetails(): Organization
+  +updateContactInfo(contact_info: String): void
+  +deleteOrganization(): void
+}
+
+class User {
+  +int user_id
+  +int org_id
+  +String name
+  +String email
+  +String password
+  +String role // admin, POM, FM, etc.
+  --
+  +registerUser(name: String, email: String, password: String, role: String): User
+  +login(email: String, password: String): Boolean
+  +updateRole(role: String): void
+  +deleteUser(): void
+}
+
+class Client {
+  +int client_id
+  +int org_id
+  +String name
+  +String contact_info
+  --
+  +addClient(name: String, contact_info: String): Client
+  +getClientDetails(): Client
+  +updateContactInfo(contact_info: String): void
+  +deleteClient(): void
+}
+
+class Project {
+  +int project_id
+  +int org_id
+  +int client_id
+  +String project_name
+  +Date start_date
+  +Date end_date
+  +String status
+  +Decimal total_budget
+  +Decimal allocated_budget
+  +Decimal remaining_budget
+  +Decimal employee_budget
+  +Decimal technical_budget
+  +Decimal additional_budget
+  +Decimal actual_expenses
+  --
+  +createProject(project_name: String, start_date: Date, end_date: Date, total_budget: Decimal): Project
+  +updateBudget(total_budget: Decimal, allocated_budget: Decimal): void
+  +getProjectDetails(): Project
+  +closeProject(): void
+}
+
+class Employee {
+  +int employee_id
+  +int org_id
+  +String name
+  +String email
+  +String role // buffer/on-bench, full-time, etc.
+  +String employee_type
+  +int experience
+  +Decimal lpa
+  +Decimal hourly_rate
+  +int project_id
+  +int project_manager_id
+  +JSON attendance // Attendance data
+  --
+  +addEmployee(name: String, email: String, role: String, experience: int, hourly_rate: Decimal): Employee
+  +updateAttendance(date: String, status: String): void
+  +calculateSalary(): Decimal
+  +deleteEmployee(): void
+}
+
+class FinancialTransaction {
+  +int transaction_id
+  +int project_id
+  +int customer_id
+  +int finance_user_id
+  +String invoice_number
+  +Decimal amount
+  +String status // Paid, Pending, Overdue, etc.
+  +Date transaction_date
+  +String bank_name
+  +String bank_account_no
+  +String bank_payee_name
+  +String bank_ifsc
+  --
+  +createTransaction(amount: Decimal, status: String, transaction_date: Date): FinancialTransaction
+  +updateTransactionStatus(status: String): void
+  +getTransactionDetails(): FinancialTransaction
+  +generateInvoice(): String
+}
+
+Organization "1" -- "0..*" User : has
+Organization "1" -- "0..*" Client : serves
+Organization "1" -- "0..*" Project : manages
+Organization "1" -- "0..*" Employee : employs
+
+Client "1" -- "0..*" Project : owns
+Project "1" -- "0..*" FinancialTransaction : tracks
+
+Project "1" -- "0..*" Employee : utilizes
+User "1" -- "0..*" FinancialTransaction : manages
+User "1" -- "0..*" Project : supervises
+Employee "0..*" -- "0..*" Project : works on
+
+@enduml
