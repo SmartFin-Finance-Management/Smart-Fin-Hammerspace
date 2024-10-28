@@ -50,6 +50,7 @@ Table projects {
 Table employees {
   employee_id int [pk, increment]
   org_id int [ref: > organizations.org_id]
+  client_id int [ref: > client.client_id]
   name varchar(255)
   email varchar(255) [unique]
   role varchar(100) // buffer/on-bench, full-time, etc.
@@ -66,7 +67,7 @@ Table employees {
 Table financial_transactions {
   transaction_id int [pk, increment]
   project_id int [ref: > projects.project_id]
-  customer_id int [ref: > client.client_id]
+  client_id int [ref: > client.client_id]
   finance_user_id int [ref: > users.user_id] // references User with FM role
   invoice_number varchar(255) [unique]
   amount decimal(18,2)
@@ -93,3 +94,4 @@ Table financial_transactions {
 // Ref: financial_transactions.project_id > projects.project_id
 // Ref: financial_transactions.customer_id > customers.customer_id
 // Ref: financial_transactions.finance_user_id > users.user_id
+
