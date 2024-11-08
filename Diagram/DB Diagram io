@@ -9,10 +9,9 @@ Table organizations {
 
 // Users Table
 Table users {
-  user_id int [pk, increment]
   org_id int [ref: > organizations.org_id]
-  name varchar(255)
-  email varchar(255) [unique]
+  username varchar(255)
+  email varchar(255) [pk,unique]
   password varchar(255)
   role varchar(100) // admin, POM, FM, etc.
 }
@@ -22,7 +21,11 @@ Table client {
   client_id int [pk, increment]
   org_id int [ref: > organizations.org_id]
   name varchar(255)
-  contact_info varchar(255)
+  phone varchar(255)
+  email varchar(255)
+  address varchar(255)
+  status varchar(255)
+  
   // project_history text
   // project_ongoing text
 }
@@ -43,7 +46,12 @@ Table projects {
   employee_budget decimal(18,2)
   technical_budget decimal(18,2)
   additional_budget decimal(18,2)
+   // New fields
+  employee_expenses decimal(18,2)
+  technical_expenses decimal(18,2)
+  additional_expenses decimal(18,2)
   actual_expenses decimal(18,2)
+  employees_list json // Using JSON to store an array of employee IDs
 }
 
 // Employees Table
@@ -59,7 +67,8 @@ Table employees {
   lpa decimal(18,2)
   hourly_rate decimal(18,2)
   project_id int [ref: > projects.project_id]
-  project_manager_id int [ref: > users.user_id]
+  project_manager_id int [ref: > users.email]
+  project_history json
   attendance json // Stores attendance data in JSON format, e.g., { "2024-01-01": "Present", "2024-01-02": "Absent" }
 }
 
@@ -68,7 +77,7 @@ Table financial_transactions {
   transaction_id int [pk, increment]
   project_id int [ref: > projects.project_id]
   client_id int [ref: > client.client_id]
-  finance_user_id int [ref: > users.user_id] // references User with FM role
+  finance_user_id int [ref: > users.email] // references User with FM role
   invoice_number varchar(255) [unique]
   amount decimal(18,2)
   status varchar(100) // Paid, Pending, Overdue, etc.
@@ -94,4 +103,3 @@ Table financial_transactions {
 // Ref: financial_transactions.project_id > projects.project_id
 // Ref: financial_transactions.customer_id > customers.customer_id
 // Ref: financial_transactions.finance_user_id > users.user_id
-
